@@ -45,9 +45,12 @@ namespace HelloMAUI
                         mode: BindingMode.OneWay),
 
                 new Label()
+                    {
+                        Style = AppStyles.GetResource<Style>("LargeFontLabel")
+                    }
                     .Row(Row.Title)
                     .Column(Column.Text)
-                    .Font(size:18, bold:true)
+                    .Font(bold:true)
                     .TextTop()
                     .TextStart()
                     .Bind(Label.TextProperty, getter: (LibraryModel model) => model.Title,

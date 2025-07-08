@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Markup;
 using Microsoft.Maui.Layouts;
 using System;
@@ -13,6 +14,7 @@ namespace HelloMAUI
 {
     internal class MainPage : BaseContentPage
     {
+        private readonly SearchBar _searchBar;
         public MainPage()
         {
 
@@ -20,12 +22,17 @@ namespace HelloMAUI
             {
                 Content = new CollectionView()
                 {
-                    Header = new Label()
-                    .Text(".NET MAUI Library")
-                    .Paddings(bottom: 8)
-                    .Font(size: 32)
+                    Header = new SearchBar()
+                    .Placeholder("Search titles")
                     .Center()
-                    .TextCenter(),
+                    .TextCenter()
+                    .Behaviors(new UserStoppedTypingBehavior()
+                    {
+                        StoppedTypingTimeThreshold = 1000,
+                        ShouldDismissKeyboardAutomatically = true,
+                        Command = new Command(() => UserStoppedTyping())
+                    })
+                    .Assign(out _searchBar),
 
                     Footer = new Label()
                     .Text(".NET MAUI: From Zero to Hero")
@@ -44,9 +51,32 @@ namespace HelloMAUI
             .Margins(12, 24, 12, 0);
         }
 
+        private void UserStoppedTyping()
+        {
+            MauiLibraries.Clear();
+            var searchText = _searchBar.Text?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                foreach (var library in Libraries())
+                {
+                    MauiLibraries.Add(library);
+                }
+            }
+            else
+            {
+                foreach(var library in Libraries().Where(x => x.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase)))
+                {
+                    MauiLibraries.Add(library);
+                }
+            }
+        }
+
         private async void HandleRefreshing(object? sender, EventArgs e)
         {
             ArgumentNullException.ThrowIfNull(sender);
+
+
+            _searchBar.IsEnabled = false;
 
             var refreshView = (RefreshView)sender;
 
@@ -61,9 +91,11 @@ namespace HelloMAUI
             });
 
             refreshView.IsRefreshing = false;
+
+            _searchBar.IsEnabled = true;
         }
 
-        private  async void HandleSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        private async void HandleSelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             ArgumentNullException.ThrowIfNull(sender);
 
@@ -79,8 +111,10 @@ namespace HelloMAUI
             collectionView.SelectedItem = null;
         }
 
-        ObservableCollection<LibraryModel> MauiLibraries  { get; } = new()
-        {
+        ObservableCollection<LibraryModel> MauiLibraries { get; } = new(Libraries());
+
+
+        static List<LibraryModel> Libraries() => new(){
             new()
             {
                 Title = "Microsoft.Maui",

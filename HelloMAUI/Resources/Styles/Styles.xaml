@@ -180,6 +180,10 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Label" x:Key="LargeFontLabel">
+        <Setter Property="FontSize" Value="20"/>
+    </Style>
+
     <Style TargetType="Span">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
     </Style>
