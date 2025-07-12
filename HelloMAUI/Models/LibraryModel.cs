@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HelloMAUI
+namespace HelloMAUI.Models
 {
     public class LibraryModel
     {

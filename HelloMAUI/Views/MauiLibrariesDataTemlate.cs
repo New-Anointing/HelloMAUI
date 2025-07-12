@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Markup;
+using HelloMAUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
-namespace HelloMAUI
+namespace HelloMAUI.Views
 {
 
     //This DataTemplate is the template that is used by the CollectionView to display a list of items
@@ -28,7 +29,7 @@ namespace HelloMAUI
                 (Row.BottomPadding, 8)),
 
             ColumnDefinitions = Columns.Define(
-                (Column.Icon, (imageRadius * 2) + (imagePadding * 2)),
+                (Column.Icon, imageRadius * 2 + imagePadding * 2),
                 (Column.Text, Star)),
 
             RowSpacing = 4,

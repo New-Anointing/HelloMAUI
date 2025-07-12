@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
+using HelloMAUI.Pages;
+using HelloMAUI.ViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace HelloMAUI
@@ -22,6 +24,17 @@ namespace HelloMAUI
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif
+
+            builder.Services.AddSingleton<AppShell>();
+            builder.Services.AddSingleton<App>();
+            builder.Services.AddTransient<ListPage>();
+
+            builder.Services.AddTransient<ListPage>();
+            builder.Services.AddTransient<DetailsPage>();
+            builder.Services.AddTransient<DetailsViewModel>();
+            builder.Services.AddTransient<ListViewModel>();
+
+
 
             return builder.Build();
         }

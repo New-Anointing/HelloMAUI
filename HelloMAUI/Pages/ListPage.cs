@@ -1,6 +1,11 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Behaviors;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Markup;
+using CommunityToolkit.Maui.Views;
+using HelloMAUI.Models;
+using HelloMAUI.ViewModels;
+using HelloMAUI.Views;
 using Microsoft.Maui.Layouts;
 using System;
 using System.Collections.Generic;
@@ -10,13 +15,15 @@ using System.Text;
 using System.Threading.Tasks;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
-namespace HelloMAUI
+namespace HelloMAUI.Pages
 {
-    internal class MainPage : BaseContentPage
+    public class ListPage : BaseContentPage<ListViewModel>
     {
         private readonly SearchBar _searchBar;
-        public MainPage()
+
+        public ListPage(ListViewModel listViewModel) : base(listViewModel)
         {
+            
 
             Content = new RefreshView()
             {
@@ -29,9 +36,13 @@ namespace HelloMAUI
                     .Behaviors(new UserStoppedTypingBehavior()
                     {
                         StoppedTypingTimeThreshold = 1000,
-                        ShouldDismissKeyboardAutomatically = true,
                         Command = new Command(() => UserStoppedTyping())
                     })
+                    .TapGesture(async () =>
+                    {
+                        // This is just to show that we can use TapGesture on SearchBar
+                        await Toast.Make("Search Bar Tapped").Show();
+                    }, 2)
                     .Assign(out _searchBar),
 
                     Footer = new Label()
@@ -50,6 +61,8 @@ namespace HelloMAUI
             }.Invoke(refreshView => refreshView.Refreshing += HandleRefreshing)
             .Margins(12, 24, 12, 0);
         }
+
+
 
         private void UserStoppedTyping()
         {
@@ -103,15 +116,17 @@ namespace HelloMAUI
 
             if(e.CurrentSelection.FirstOrDefault() is LibraryModel model)
             {
-                await Toast.Make($"{model.Title} Tapped").Show();
+                await Shell.Current.GoToAsync(AppShell.GetRoute<DetailsPage>(), new Dictionary<string, object>
+                {
+                    {DetailsViewModel.LibraryModelKey, model }
+                });
             }
-
-            await Task.Delay(100);
 
             collectionView.SelectedItem = null;
         }
 
         ObservableCollection<LibraryModel> MauiLibraries { get; } = new(Libraries());
+
 
 
         static List<LibraryModel> Libraries() => new(){
